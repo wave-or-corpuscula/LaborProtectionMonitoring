@@ -2,7 +2,7 @@ from app import FormsController
 
 
 def main():
-    controller = FormsController()
+    controller = FormsController() 
     controller.run_app()
 
 
