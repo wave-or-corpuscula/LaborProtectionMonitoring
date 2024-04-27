@@ -4,5 +4,9 @@ from . import BaseModel
 
 class Users(BaseModel):
     id = AutoField(primary_key=True)
-    username = CharField(unique=True)
-    password = CharField()
+    username = CharField(unique=True, verbose_name="Имя пользователя")
+    password = CharField(verbose_name="Пароль")
+
+
+    class Meta:
+        table_name = "users"

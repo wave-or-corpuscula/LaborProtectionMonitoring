@@ -4,56 +4,44 @@ from models import *
 
 db_init()
 
-def add_department(name):
-    department = Departments.create(department_name=name)
-    return department
 
+with db.atomic():
+    # Заполнение таблицы Employees
+    for i in range(1, 6):
+        Employees.create(name=f'Employee_{i}', hiring_date=date.today(), phone=f'123-456-789{i}', is_male=True)
 
-def add_post(name):
-    post = Posts.create(post_name=name)
-    return post
+    # Заполнение таблицы Departments
+    for i in range(1, 6):
+        Departments.create(department_name=f'Department_{i}')
 
+    # Заполнение таблицы EmployeesInDepartment
+    for i in range(1, 6):
+        EmployeesInDepartments.create(department_id=i, employee_id=i, start_date=date.today())
 
-def add_employee(name, department_id, post_id, hiring_date, briefing_date):
-    employee = Employees.create(name=name, department_id=department_id, post_id=post_id, hiring_date=hiring_date, last_briefing_date=briefing_date)
-    return employee
+    # Заполнение таблицы Professions
+    for i in range(1, 6):
+        Professions.create(profession_name=f'Profession_{i}')
 
+    # Заполнение таблицы EmployeesProfessions
+    for i in range(1, 6):
+        EmployeesProfessions.create(employee_id=i, profession_id=i, start_date=date.today())
 
-def add_user(user_name, password):
-    user = Users.create(user_name=user_name, password=password)
-    return user
+    # Заполнение таблицы Incidents
+    for i in range(1, 6):
+        Incidents.create(employee_id=i, incident_date=date.today(), description=f'Incident_{i}')
 
+    # Заполнение таблицы SafetyBriefings
+    for i in range(1, 6):
+        SafetyBriefings.create(briefing_name=f'Briefing_{i}', description=f'Description_{i}', date=date.today())
 
-def add_admin(user_id):
-    admin = Admins.create(admin_user_id=user_id)
-    return admin
+    # Заполнение таблицы BriefedEmployees
+    for i in range(1, 6):
+        BriefedEmployees.create(employee_id=i, briefing_id=i)
 
+    # Заполнение таблицы Users
+    for i in range(1, 6):
+        Users.create(username=f'user_{i}', password=f'password_{i}')
 
-RECORDS_AMOUNT = 10
-
-users_data = [
-    {"user_name": f"user{i}", "password": f"password{i}"} for i in range(1, RECORDS_AMOUNT + 1)
-]
-
-employees_data = [
-    {"name": f"Employee {i}", "department_id": (i % 3) + 1, "post_id": (i % 3) + 1, "hiring_date": date(2020, 1, i % 28 + 1), "briefing_date": date(2022, 1, i % 28 + 1)} for i in range(1, RECORDS_AMOUNT + 1)
-]
-
-posts = ["Developer", "Manager", "Accountant"]
-
-departments = ["IT", "HR", "Finance"]
-
-def fill_db():
-    for department in departments:
-        add_department(department)
-    for post in posts:
-        add_post(post)
-    for employee_data in employees_data:
-        add_employee(**employee_data)
-    for user_data in users_data:
-        add_user(**user_data)
-    for i in range(1, 3):
-        add_admin(i)
-    
-fill_db()
-    
+    # Заполнение таблицы Admins
+    for i in range(1, 2):
+        Admins.create(admin_user_id=i)

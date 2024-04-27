@@ -1,4 +1,4 @@
-from .base_model import BaseModel
+from .base_model import BaseModel, db
 from .departments import Departments
 from .employees import Employees
 from .employees_in_departments import EmployeesInDepartments
@@ -9,3 +9,26 @@ from .safety_briefings import SafetyBriefings
 from .briefed_employees import BriefedEmployees
 from .users import Users
 from .admins import Admins
+
+
+tables = [
+    Departments, 
+    Professions, 
+    Employees, 
+    EmployeesInDepartments, 
+    EmployeesProfessions, 
+    Incidents, 
+    SafetyBriefings, 
+    BriefedEmployees, 
+    Users, 
+    Admins
+]
+
+def db_init():
+    for table in tables:
+        if not db.table_exists(table):
+            table.create_table()
+
+get_model = {
+    model._meta.table_name: model for model in tables
+}
