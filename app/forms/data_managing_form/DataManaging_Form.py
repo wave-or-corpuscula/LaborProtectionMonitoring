@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QMainWindow
 from .DataManagingUi import Ui_DataManagingWindow
 from app.signals import MenuSignals, DataManagingSignals
 from app.database import *
-
+from app.utils import TableManager
 
 class DataManagingForm(QMainWindow):
 
@@ -15,6 +15,8 @@ class DataManagingForm(QMainWindow):
         super(DataManagingForm, self).__init__(parent)
         self.ui = Ui_DataManagingWindow()
         self.ui.setupUi(self)
+
+        self.tmanager = TableManager(self.ui.dataDisplay_tw)
 
         # Custom signals connection
 
@@ -31,30 +33,19 @@ class DataManagingForm(QMainWindow):
         # Other stuff setup 
 
         self.tables = Users._meta.database.get_tables()
-        self.tables_ru_names = {'admins': "Администраторы", 
-                                'departments': "Департаменты", 
-                                'employees': "Сотрудники", 
-                                'posts': "Должности", 
-                                'users': "Пользователи"}
-        self.ui.currentTable_cb.addItems([self.tables_ru_names[table] for table in self.tables])
+        self.ui.currentTable_cb.addItems([table for table in self.tables])
 
 
     def get_table_columns(self, table: str):
         model = get_model[table]
         columns = db.get_columns(table)
-        verbose_columns = [model._meta.fields[col.name].verbose_name for col in columns]
+        verbose_columns = [model._meta.fields[col.name].verbose_name if model._meta.fields[col.name].verbose_name else col.name for col in columns]
         print(verbose_columns)
 
     @Slot()
     def show_current_table(self):
         cur_table = self.tables[self.ui.currentTable_cb.currentIndex()]
-        # columns = Users._meta.database.get_columns(cur_table)
-        # for table in db.get:
-        #     print(type(table))
-        # # for record in Users.select().execute():
-        # for col in columns:
-        #     print(Users._meta.fields[col.name].verbose_name)
-        self.get_table_columns(cur_table)
+        columns = self.get_table_columns(cur_table)
 
     @Slot()
     def goto_menu(self):

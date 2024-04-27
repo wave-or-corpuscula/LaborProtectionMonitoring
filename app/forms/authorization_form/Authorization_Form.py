@@ -2,7 +2,7 @@ from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QMainWindow, QMessageBox
 
 from .AuthorizationUi import Ui_AuthorizationWindow
-from app.database import check_user
+# from app.database import check_user
 from app.signals import AuthorizationSignals, MenuSignals
 
 from app.utils import User
@@ -31,11 +31,11 @@ class AuthorizationForm(QMainWindow):
         username = self.ui.username_le.text()
         password = self.ui.password_le.text()
 
-        user, is_admin = check_user(username, password)
-        if not user:
-            QMessageBox.about(self, "Ошибка", "Пользователя не существует!")
-        else:
-            self.hide()
-            self.auth_signals.user_authorized.emit(User(username, is_admin))
+        # user, is_admin = check_user(username, password)
+        # if not user:
+        #     QMessageBox.about(self, "Ошибка", "Пользователя не существует!")
+        # else:
+        #     self.hide()
+        #     self.auth_signals.user_authorized.emit(User(username, is_admin))
         self.ui.username_le.clear()
         self.ui.password_le.clear()
