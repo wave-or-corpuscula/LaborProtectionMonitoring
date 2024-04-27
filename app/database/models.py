@@ -10,35 +10,44 @@ class BaseModel(Model):
 
 class Departments(BaseModel):
     id = AutoField(primary_key=True)
-    department_name = CharField(null=False)
+    department_name = CharField(verbose_name="Департаменты", null=False)
 
 
 class Posts(BaseModel):
     id = AutoField(primary_key=True)
-    post_name = CharField(null=False)
+    post_name = CharField(verbose_name="Должности", null=False)
 
 
 class Employees(BaseModel):
     id = AutoField(primary_key=True)
-    name = CharField()
-    department_id = ForeignKeyField(Departments, backref='employees', null=True, on_delete='SET NULL')
-    post_id = ForeignKeyField(Posts, backref='employees', null=True, on_delete='SET NULL')
-    hiring_date = DateField()
-    last_briefing_date = DateField()
+    name = CharField(verbose_name="ФИО")
+    department_id = ForeignKeyField(Departments, backref='employees', null=True, on_delete='SET NULL', verbose_name="Департамент")
+    post_id = ForeignKeyField(Posts, backref='employees', null=True, on_delete='SET NULL', verbose_name="Должность")
+    hiring_date = DateField(verbose_name="Дата найма")
+    last_briefing_date = DateField(verbose_name="Последний инструктаж")
 
 
 class Users(BaseModel):
     id = AutoField(primary_key=True)
-    user_name = CharField(null=False)
-    password = CharField(null=False)
+    user_name = CharField(verbose_name="Имя пользователя", null=False)
+    password = CharField(verbose_name="Пароль", null=False)
 
     def __str__(self):
-        return f"id:{self.id}, username:{self.user_name}, pass:{self.password}"
+        return f"<id:{self.id},username:{self.user_name},pass:{self.password}>"
 
 
 class Admins(BaseModel):
     id = AutoField(primary_key=True)
-    admin_user_id = ForeignKeyField(Users, backref='admins', null=True, on_delete='CASCADE')
+    admin_user_id = ForeignKeyField(Users, backref='admins', null=True, on_delete='CASCADE', verbose_name="Админы")
+
+
+get_model = {
+    "departments": Departments,
+    "posts": Posts,
+    "employees": Employees,
+    "users": Users,
+    "admins": Admins,
+}
 
 
 def check_user(username: str, password: str):

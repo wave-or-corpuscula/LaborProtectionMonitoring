@@ -15,9 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QHeaderView,
-    QMainWindow, QMenuBar, QPushButton, QSizePolicy,
-    QStatusBar, QTableWidget, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
+    QHeaderView, QLabel, QMainWindow, QMenuBar,
+    QPushButton, QSizePolicy, QStatusBar, QTableWidget,
+    QTableWidgetItem, QWidget)
 
 class Ui_DataManagingWindow(object):
     def setupUi(self, DataManagingWindow):
@@ -31,7 +32,7 @@ class Ui_DataManagingWindow(object):
         self.dataDisplay_tw.setGeometry(QRect(10, 10, 611, 451))
         self.managingTools_gb = QGroupBox(self.centralwidget)
         self.managingTools_gb.setObjectName(u"managingTools_gb")
-        self.managingTools_gb.setGeometry(QRect(630, 10, 161, 201))
+        self.managingTools_gb.setGeometry(QRect(630, 140, 161, 201))
         self.addRecord_pb = QPushButton(self.managingTools_gb)
         self.addRecord_pb.setObjectName(u"addRecord_pb")
         self.addRecord_pb.setGeometry(QRect(10, 30, 141, 41))
@@ -50,6 +51,16 @@ class Ui_DataManagingWindow(object):
         self.horizontalLayout = QHBoxLayout(self.horizontalLayoutWidget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.label = QLabel(self.centralwidget)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(630, 20, 151, 21))
+        font = QFont()
+        font.setPointSize(12)
+        self.label.setFont(font)
+        self.currentTable_cb = QComboBox(self.centralwidget)
+        self.currentTable_cb.setObjectName(u"currentTable_cb")
+        self.currentTable_cb.setGeometry(QRect(630, 50, 151, 31))
+        self.currentTable_cb.setFont(font)
         DataManagingWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(DataManagingWindow)
         self.menubar.setObjectName(u"menubar")
@@ -71,5 +82,6 @@ class Ui_DataManagingWindow(object):
         self.changeRecord_pb.setText(QCoreApplication.translate("DataManagingWindow", u"\u0418\u0437\u043c\u0435\u043d\u0438\u0442\u044c", None))
         self.deleteRecord_pb.setText(QCoreApplication.translate("DataManagingWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.backToMenu_pb.setText(QCoreApplication.translate("DataManagingWindow", u"\u041d\u0430\u0437\u0430\u0434", None))
+        self.label.setText(QCoreApplication.translate("DataManagingWindow", u"\u0412\u044b\u0431\u043e\u0440 \u0442\u0430\u0431\u043b\u0438\u0446\u044b:", None))
     # retranslateUi
 
