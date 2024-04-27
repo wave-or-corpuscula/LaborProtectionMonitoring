@@ -11,10 +11,12 @@ from .users import Users
 from .admins import Admins
 
 
-tables = [
+# tables_names = db.get_tables()
+
+models = [
+    Employees, 
     Departments, 
     Professions, 
-    Employees, 
     EmployeesInDepartments, 
     EmployeesProfessions, 
     Incidents, 
@@ -25,10 +27,10 @@ tables = [
 ]
 
 def db_init():
-    for table in tables:
+    for table in models:
         if not db.table_exists(table):
             table.create_table()
 
 get_model = {
-    model._meta.table_name: model for model in tables
+    model._meta.table_name: model for model in models
 }

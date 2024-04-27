@@ -2,9 +2,11 @@ from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QMainWindow
 
 from .DataManagingUi import Ui_DataManagingWindow
-from app.signals import MenuSignals, DataManagingSignals
 from app.database import *
+from app.database.db_methods import *
 from app.utils import TableManager
+from app.signals import MenuSignals, DataManagingSignals
+
 
 class DataManagingForm(QMainWindow):
 
@@ -32,20 +34,25 @@ class DataManagingForm(QMainWindow):
 
         # Other stuff setup 
 
-        self.tables = Users._meta.database.get_tables()
+        self.tables = [self.get_model_name(model) for model in models]
         self.ui.currentTable_cb.addItems([table for table in self.tables])
 
+    @staticmethod
+    def get_model_name(model: BaseModel):
+        return model._meta.table_name
 
     def get_table_columns(self, table: str):
         model = get_model[table]
         columns = db.get_columns(table)
         verbose_columns = [model._meta.fields[col.name].verbose_name if model._meta.fields[col.name].verbose_name else col.name for col in columns]
-        print(verbose_columns)
+        return verbose_columns
 
     @Slot()
     def show_current_table(self):
         cur_table = self.tables[self.ui.currentTable_cb.currentIndex()]
         columns = self.get_table_columns(cur_table)
+        data = select_all(get_model[cur_table])
+        self.tmanager.fill_table(data=data, columns=columns)
 
     @Slot()
     def goto_menu(self):

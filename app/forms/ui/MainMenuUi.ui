@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Все работники</string>
+     <string>Все Сотрудники</string>
     </property>
    </widget>
    <widget class="QPushButton" name="briefingCheck_pb">
