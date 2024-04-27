@@ -52,10 +52,16 @@ INNER JOIN "employees" AS "t2" ON ("t1"."employee_id" = "t2"."id")"""
 FROM "admins" AS "t1" 
 INNER JOIN "users" AS "t2" ON ("t1"."admin_user_id" = "t2"."id")"""
             return [row for row in db.execute_sql(query)]
+        case Employees._meta.table_name:
+            query = """SELECT "t1"."id", "t1"."name", "t1"."hiring_date", "t1"."phone", 
+CASE WHEN "t1"."is_male" THEN 'М' ELSE 'Ж' END 
+FROM "employees" AS "t1" 
+ORDER BY "t1"."id" """
+            return [row for row in db.execute_sql(query)]
         case _:
             query = model.select()
     try:
         dict_data = [row.__dict__["__data__"] for row in query.execute()]
-        return [row.values() for row in dict_data]
+        return [list(row.values()) for row in dict_data]
     except Exception as e:
         print(f"Error: {e}")

@@ -59,7 +59,7 @@ class Ui_MenuWindow(object):
         MenuWindow.setWindowTitle(QCoreApplication.translate("MenuWindow", u"\u0413\u043b\u0430\u0432\u043d\u043e\u0435 \u043c\u0435\u043d\u044e", None))
         self.logout_pb.setText(QCoreApplication.translate("MenuWindow", u"\u0412\u044b\u0439\u0442\u0438", None))
         self.username_lb.setText(QCoreApplication.translate("MenuWindow", u"username", None))
-        self.changeData_pb.setText(QCoreApplication.translate("MenuWindow", u"\u0412\u0441\u0435 \u0440\u0430\u0431\u043e\u0442\u043d\u0438\u043a\u0438", None))
+        self.changeData_pb.setText(QCoreApplication.translate("MenuWindow", u"\u0412\u0441\u0435 \u0421\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0438", None))
         self.briefingCheck_pb.setText(QCoreApplication.translate("MenuWindow", u"\u041f\u0440\u043e\u0445\u043e\u0436\u0434\u0435\u043d\u0438\u0435 \u041e\u0422", None))
         self.exit_pb.setText(QCoreApplication.translate("MenuWindow", u"\u0412\u044b\u0445\u043e\u0434", None))
     # retranslateUi

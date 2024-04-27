@@ -10,6 +10,7 @@ class TableManager:
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.setColumnCount(len(columns))
         self.table.setHorizontalHeaderLabels(columns)
+        self.table.setColumnHidden(0, 1)
 
         rows = len(data)
         self.table.setRowCount(rows)
