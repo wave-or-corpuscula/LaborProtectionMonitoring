@@ -35,6 +35,7 @@ class DataManagingForm(QMainWindow):
         self.ui.currentTable_cb.currentIndexChanged.connect(self.show_current_table)
         self.ui.dataDisplay_tw.itemClicked.connect(self.item_selected)
         self.ui.deleteRecord_pb.clicked.connect(self.del_record)
+        self.ui.addRecord_pb.clicked.connect(self.add_record)
 
         # Other stuff setup 
 
@@ -43,6 +44,37 @@ class DataManagingForm(QMainWindow):
 
         self.tables = [self.get_model_name(model) for model in models]
         self.ui.currentTable_cb.addItems([table for table in self.tables])
+
+    def add_record(self):
+        columns = [col.name for col in db.get_columns(self.curTable)[1:]]
+        values = self.get_inputs_data()
+        append_data = {col: val for col, val in zip(columns, values)}
+        try:
+            add_record(self.curModel, append_data)
+            self.refresh_data()
+        except Exception as e:
+            if "NOT NULL" in str(e):
+                QMessageBox.critical(self, "Неверные данные", "Все поля должны быть заполнены!")
+            else:
+                QMessageBox.critical(self, "Неверные данные", "Ошибка при добавлении данных")
+
+    def get_inputs_data(self):
+        data = []
+        for i in range(self.ui.inputs_hbl.count()):
+            widget = self.ui.inputs_hbl.itemAt(i).widget()
+            if isinstance(widget, QLineEdit):
+                append_data = widget.text() if widget.text() else None
+                data.append(append_data)
+            elif isinstance(widget, QDateEdit):
+                data.append(widget.date().toString(u"yyyy-MM-dd"))
+            elif isinstance(widget, QComboBox):
+                obj_name = widget.objectName()
+                if obj_name == "is_male":
+                    data.append(widget.currentText() == "М")
+                else:
+                    f_key_id = self.foreign_keys_ids[obj_name][widget.currentText()]
+                    data.append(f_key_id)
+        return data
 
     @Slot()
     def del_record(self):

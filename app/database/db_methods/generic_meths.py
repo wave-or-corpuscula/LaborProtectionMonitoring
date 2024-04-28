@@ -3,11 +3,11 @@ from peewee import *
 from app.database.models import *
 
 
-def add_record(model: BaseModel, **kwargs):
+def add_record(model: BaseModel, data: dict):
     try:
-        model.create(**kwargs)
+        model.create(**data)
     except Exception as e:
-        print(f"kwargs: {kwargs}, Error: {e}")
+        raise Exception(e)
 
 def delete_record(model: BaseModel, record_id: int):
     try:
