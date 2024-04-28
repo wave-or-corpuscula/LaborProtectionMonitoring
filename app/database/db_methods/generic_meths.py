@@ -7,7 +7,7 @@ def add_record(model: BaseModel, data: dict):
     try:
         model.create(**data)
     except Exception as e:
-        raise Exception(e)
+        raise
 
 def delete_record(model: BaseModel, record_id: int):
     try:
@@ -15,11 +15,11 @@ def delete_record(model: BaseModel, record_id: int):
     except Exception as e:
         print(f"record_id: {record_id}, Error: {e}")
 
-def update_record(model: BaseModel, update_id: int, **kwargs):
+def update_record(model: BaseModel, update_id: int, data: dict):
     try:
-        model.update(**kwargs).where(model.id == update_id).execute()
+        model.update(**data).where(model.id == update_id).execute()
     except Exception as e:
-        print(f"record_id: {update_id}, kwargs: {kwargs}, Error: {e}")
+        raise
 
 def select_all(model: BaseModel):
     table = model._meta.table_name

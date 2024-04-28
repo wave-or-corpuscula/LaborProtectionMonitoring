@@ -36,6 +36,7 @@ class DataManagingForm(QMainWindow):
         self.ui.dataDisplay_tw.itemClicked.connect(self.item_selected)
         self.ui.deleteRecord_pb.clicked.connect(self.del_record)
         self.ui.addRecord_pb.clicked.connect(self.add_record)
+        self.ui.changeRecord_pb.clicked.connect(self.change_record)
 
         # Other stuff setup 
 
@@ -45,18 +46,36 @@ class DataManagingForm(QMainWindow):
         self.tables = [self.get_model_name(model) for model in models]
         self.ui.currentTable_cb.addItems([table for table in self.tables])
 
-    def add_record(self):
+    @property
+    def getInputDict(self):
         columns = [col.name for col in db.get_columns(self.curTable)[1:]]
         values = self.get_inputs_data()
-        append_data = {col: val for col, val in zip(columns, values)}
+        return {col: val for col, val in zip(columns, values)}
+
+    @Slot()
+    def change_record(self):
+        if self.record_id:
+            try:
+                update_record(self.curModel, self.record_id, self.getInputDict)
+                self.refresh_data()
+            except Exception as e:
+                if "NOT NULL" in str(e):
+                    QMessageBox.critical(self, "Некорректные данные", "Все поля должны быть заполнены!")
+                else:
+                    QMessageBox.critical(self, "Некорректные данные", "Ошибка при добавлении данных")
+        else:
+            QMessageBox.warning(self, "Запись не выбрана", "Перед изменением выберете запись!")
+
+    @Slot()
+    def add_record(self):
         try:
-            add_record(self.curModel, append_data)
+            add_record(self.curModel, self.getInputDict)
             self.refresh_data()
         except Exception as e:
             if "NOT NULL" in str(e):
-                QMessageBox.critical(self, "Неверные данные", "Все поля должны быть заполнены!")
+                QMessageBox.critical(self, "Некорректные данные", "Все поля должны быть заполнены!")
             else:
-                QMessageBox.critical(self, "Неверные данные", "Ошибка при добавлении данных")
+                QMessageBox.critical(self, "Некорректные данные", "Ошибка при изменении данных")
 
     def get_inputs_data(self):
         data = []
