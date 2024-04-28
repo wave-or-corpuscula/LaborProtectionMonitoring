@@ -4,7 +4,7 @@ from . import BaseModel, Employees
 
 class Incidents(BaseModel):
     id = AutoField(primary_key=True)
-    employee_id = ForeignKeyField(Employees, backref='incidents', verbose_name="Сотрудник")
+    employee_id = ForeignKeyField(Employees, backref='incidents', verbose_name="Сотрудник", on_delete="cascade", on_update="cascade")
     incident_date = DateField(verbose_name="Дата инцидента")
     description = TextField(verbose_name="Описание")
 

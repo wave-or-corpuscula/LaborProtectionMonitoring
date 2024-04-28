@@ -46,6 +46,8 @@ class MenuForm(QMainWindow):
         self.ui.username_lb.setText(user.username)
         if user.is_admin:
             self.ui.username_lb.setStyleSheet("border: 1px solid yellow")
+        else:
+            self.ui.username_lb.setStyleSheet("border: 1px solid black")
         self.user = user
         self.show()
 

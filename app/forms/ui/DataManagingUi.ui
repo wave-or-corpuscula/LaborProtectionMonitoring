@@ -23,6 +23,12 @@
       <height>451</height>
      </rect>
     </property>
+    <property name="selectionMode">
+     <enum>QAbstractItemView::SingleSelection</enum>
+    </property>
+    <property name="selectionBehavior">
+     <enum>QAbstractItemView::SelectRows</enum>
+    </property>
    </widget>
    <widget class="QGroupBox" name="managingTools_gb">
     <property name="geometry">
@@ -94,7 +100,7 @@
      <rect>
       <x>10</x>
       <y>469</y>
-      <width>771</width>
+      <width>611</width>
       <height>61</height>
      </rect>
     </property>

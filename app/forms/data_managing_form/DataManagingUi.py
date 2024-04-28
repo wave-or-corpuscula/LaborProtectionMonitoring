@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox, QHBoxLayout,
-    QHeaderView, QLabel, QMainWindow, QMenuBar,
-    QPushButton, QSizePolicy, QStatusBar, QTableWidget,
-    QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QGroupBox,
+    QHBoxLayout, QHeaderView, QLabel, QMainWindow,
+    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_DataManagingWindow(object):
     def setupUi(self, DataManagingWindow):
@@ -30,6 +30,8 @@ class Ui_DataManagingWindow(object):
         self.dataDisplay_tw = QTableWidget(self.centralwidget)
         self.dataDisplay_tw.setObjectName(u"dataDisplay_tw")
         self.dataDisplay_tw.setGeometry(QRect(10, 10, 611, 451))
+        self.dataDisplay_tw.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.dataDisplay_tw.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.managingTools_gb = QGroupBox(self.centralwidget)
         self.managingTools_gb.setObjectName(u"managingTools_gb")
         self.managingTools_gb.setGeometry(QRect(630, 140, 161, 201))
@@ -47,7 +49,7 @@ class Ui_DataManagingWindow(object):
         self.backToMenu_pb.setGeometry(QRect(640, 420, 141, 41))
         self.horizontalLayoutWidget = QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setObjectName(u"horizontalLayoutWidget")
-        self.horizontalLayoutWidget.setGeometry(QRect(10, 469, 771, 61))
+        self.horizontalLayoutWidget.setGeometry(QRect(10, 469, 611, 61))
         self.inputs_hbl = QHBoxLayout(self.horizontalLayoutWidget)
         self.inputs_hbl.setObjectName(u"inputs_hbl")
         self.inputs_hbl.setContentsMargins(0, 0, 0, 0)

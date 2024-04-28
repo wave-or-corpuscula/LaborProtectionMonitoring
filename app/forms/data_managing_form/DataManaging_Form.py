@@ -1,7 +1,7 @@
 from peewee import *
 
-from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QLineEdit, QHBoxLayout, QDateEdit, QComboBox
+from PySide6.QtCore import Slot, QDate
+from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QLineEdit, QHBoxLayout, QDateEdit, QComboBox, QMessageBox
 
 from .DataManagingUi import Ui_DataManagingWindow
 from app.database import *
@@ -34,22 +34,57 @@ class DataManagingForm(QMainWindow):
         self.ui.backToMenu_pb.clicked.connect(self.goto_menu)
         self.ui.currentTable_cb.currentIndexChanged.connect(self.show_current_table)
         self.ui.dataDisplay_tw.itemClicked.connect(self.item_selected)
+        self.ui.deleteRecord_pb.clicked.connect(self.del_record)
 
         # Other stuff setup 
 
+        self.record_id = None
         self.foreign_keys_ids = {}
 
         self.tables = [self.get_model_name(model) for model in models]
         self.ui.currentTable_cb.addItems([table for table in self.tables])
 
     @Slot()
+    def del_record(self):
+        if self.record_id:
+            delete_record(self.curModel, self.record_id)
+            self.refresh_data()
+            self.record_id = None
+        else:
+            QMessageBox.warning(self, "Запись не выбрана", "Перед удалением выберете запись!")
+
+    @Slot()
     def item_selected(self, item: QTableWidgetItem):
-        for i in range(self.ui.dataDisplay_tw.columnCount()):
-            print(self.ui.dataDisplay_tw.item(item.row(), i).text())
+        row_data = self.get_row_data(item.row())
+        self.record_id = row_data[0]
+        row_data_no_id = row_data[1:]
+        for i, item_val in zip(range(self.ui.inputs_hbl.count()), row_data_no_id):
+            widget = self.ui.inputs_hbl.itemAt(i).widget()
+            if isinstance(widget, QLineEdit):
+                widget.setText(item_val)
+            elif isinstance(widget, QDateEdit):
+                widget.setDate(QDate.fromString(item_val, u"yyyy-MM-dd"))
+            elif isinstance(widget, QComboBox):
+                widget.setCurrentText(item_val)
+
+    def get_row_data(self, row_num: int):
+        return [self.ui.dataDisplay_tw.item(row_num, i).text() for i in range(self.ui.dataDisplay_tw.columnCount())]
 
     @staticmethod
     def get_model_name(model: BaseModel):
         return model._meta.table_name
+    
+    def refresh_data(self):
+        data = select_all(self.curModel)
+        self.tmanager.fill_table(data=data)
+
+    @property
+    def curTable(self):
+        return self.tables[self.ui.currentTable_cb.currentIndex()]
+    
+    @property
+    def curModel(self):
+        return get_model[self.curTable]
 
     def get_table_columns(self, table: str):
         model = get_model[table]
@@ -60,9 +95,9 @@ class DataManagingForm(QMainWindow):
 
     @Slot()
     def show_current_table(self):
-        cur_table = self.tables[self.ui.currentTable_cb.currentIndex()]
-        columns = self.get_table_columns(cur_table)
-        data = select_all(get_model[cur_table])
+        self.record_id = None
+        columns = self.get_table_columns(self.curTable)
+        data = select_all(self.curModel)
         self.tmanager.fill_table(data=data, columns=columns)
         self.set_table_inputs()
     
@@ -76,9 +111,11 @@ class DataManagingForm(QMainWindow):
                 self.ui.inputs_hbl.addWidget(inp)
             elif isinstance(col_type, DateField):
                 inp = QDateEdit()
+                inp.setDisplayFormat(u"yyyy-MM-dd")
                 self.ui.inputs_hbl.addWidget(inp)
             elif isinstance(col_type, BooleanField):
                 inp = QComboBox()
+                inp.setObjectName("is_male")
                 inp.addItems(["М", "Ж"])
                 self.ui.inputs_hbl.addWidget(inp)
             elif isinstance(col_type, ForeignKeyField):
@@ -88,7 +125,6 @@ class DataManagingForm(QMainWindow):
                 self.foreign_keys_ids[col_name] = first_col_dict
                 inp.addItems(first_col_dict.keys())
                 self.ui.inputs_hbl.addWidget(inp)
-        print(self.foreign_keys_ids)
 
     @Slot()
     def goto_menu(self):
@@ -103,4 +139,3 @@ class DataManagingForm(QMainWindow):
     def clear_layout(layout: QHBoxLayout):
         for i in reversed(range(layout.count())):
             layout.itemAt(i).widget().deleteLater()
-            # layout.removeItem(layout.itemAt(i))
