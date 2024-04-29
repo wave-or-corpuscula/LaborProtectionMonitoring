@@ -62,7 +62,7 @@ class DataManagingForm(QMainWindow):
                 if "NOT NULL" in str(e):
                     QMessageBox.critical(self, "Некорректные данные", "Все поля должны быть заполнены!")
                 else:
-                    QMessageBox.critical(self, "Некорректные данные", "Ошибка при добавлении данных")
+                    QMessageBox.critical(self, "Некорректные данные", "Ошибка при изменении данных")
         else:
             QMessageBox.warning(self, "Запись не выбрана", "Перед изменением выберете запись!")
 
@@ -74,8 +74,10 @@ class DataManagingForm(QMainWindow):
         except Exception as e:
             if "NOT NULL" in str(e):
                 QMessageBox.critical(self, "Некорректные данные", "Все поля должны быть заполнены!")
+            elif "UNIQUE" in str(e):
+                QMessageBox.critical(self, "Некорректные данные", "Записи должны быть уникальны!")
             else:
-                QMessageBox.critical(self, "Некорректные данные", "Ошибка при изменении данных")
+                QMessageBox.critical(self, "Ошибка при добавлении данных", str(e))
 
     def get_inputs_data(self):
         data = []

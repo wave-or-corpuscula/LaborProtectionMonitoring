@@ -3,10 +3,10 @@ from app.database.methods_test import test
 
 
 def main():
-    controller = FormsController()
-    controller.run_app()
+    # controller = FormsController()
+    # controller.run_app()
 
-    # test()
+    test()
 
 
 if __name__ == "__main__":

@@ -21,9 +21,10 @@ class FormsController:
         self.authorization_form = AuthorizationForm(auth_signals=auth_signals, menu_signals=menu_signals)
         self.menu_form = MenuForm(auth_signals=auth_signals, menu_signals=menu_signals, data_manage_signals=data_manage_signals)
         self.data_managing_form = DataManagingForm(menu_signals=menu_signals, data_manage_signals=data_manage_signals)
+        self.briefings_form = BriefingsForm()
 
     def run_app(self):
         db_init()
-        window = self.data_managing_form
+        window = self.briefings_form
         window.show()
         sys.exit(self.app.exec())
