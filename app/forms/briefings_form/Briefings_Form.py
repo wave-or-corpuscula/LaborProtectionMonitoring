@@ -1,11 +1,13 @@
+import datetime
+
+from PySide6.QtGui import QColor
 from PySide6.QtCore import Slot
-from PySide6.QtGui import QShowEvent
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox
 
 from .BriefingsUi import Ui_BriefingsWindow
 from app.utils import TableManager
-from app.database import SafetyBriefings
-from app.database.db_methods import get_employees_last_briefed, select_all, get_verbose_columns
+from app.database import SafetyBriefings, BriefedEmployees
+from app.database.db_methods import get_employees_last_briefed, select_all, get_verbose_columns, add_record
 from app.signals import *
 
 
@@ -19,7 +21,10 @@ class BriefingsForm(QMainWindow):
         self.ui = Ui_BriefingsWindow()
         self.ui.setupUi(self)
 
-        self.employees_columns = ["id работника", "Работник", "Последний инструктаж", "Дата", "Следующий инструктаж"]
+        self.selected_employee_id = None
+        self.selected_briefing_id = None
+
+        self.employees_columns = ["id", "Работник", "Последний инструктаж", "Дата", "Следующий инструктаж"]
         self.empl_tmanager = TableManager(self.ui.employees_tw, hidden_cols=[0])
         self.briefings_columns = get_verbose_columns(SafetyBriefings._meta.table_name)
         self.brief_tmanager = TableManager(self.ui.briefings_tw, hidden_cols=[0])
@@ -39,24 +44,66 @@ class BriefingsForm(QMainWindow):
         # Generic signals connection
 
         self.ui.back_pb.clicked.connect(self.goto_menu)
+        self.ui.instruct_pb.clicked.connect(self.instruct_employee)
+        self.ui.employees_tw.itemClicked.connect(self.select_employee)
+        self.ui.briefings_tw.itemClicked.connect(self.select_briefing)
 
+    def select_briefing(self, item: QTableWidgetItem):
+        self.selected_briefing_id = self.ui.briefings_tw.item(item.row(), 0).text()
+        self.ui.selectedBriefing_le.setText(self.ui.briefings_tw.item(item.row(), 1).text())
 
+    def select_employee(self, item: QTableWidgetItem):
+        self.selected_employee_id = self.ui.employees_tw.item(item.row(), 0).text()
+        self.ui.selectedEmployee_le.setText(self.ui.employees_tw.item(item.row(), 1).text())
 
-        # self.employees_set_tables_info()
+    def instruct_employee(self):
+        if not self.selected_employee_id:
+            QMessageBox.warning(self, "Не выбран работник", "Сначала выребете работника!")
+            return
+        if not self.selected_briefing_id:
+            QMessageBox.warning(self, "Не выбран инструктаж", "Сначала выребете инструктаж!")
+            return
+        add_record(BriefedEmployees, {"briefing_id": self.selected_briefing_id, 
+                                      "employee_id": self.selected_employee_id})
+        self.employees_set_tables_info()
+        
 
     @Slot()
     def goto_menu(self):
         self.hide()
         self.briefing_signals.goto_menu.emit()
 
-    def showEvent(self, event: QShowEvent) -> None:
+    def color_expired_briefings(self):
+        for row in range(self.ui.employees_tw.rowCount()):
+
+            if self.ui.employees_tw.item(row, 2).text() == "Не проходил":
+                for col in range(len(self.employees_columns)):
+                    item = self.ui.employees_tw.item(row, col)
+                    item.setBackground(QColor("red"))
+                continue
+            next_brief_date = datetime.datetime.strptime(self.ui.employees_tw.item(row, 4).text(), "%Y-%m-%d").date()
+            if (next_brief_date - datetime.datetime.today().date()).total_seconds() < 0:
+                for col in range(len(self.employees_columns)):
+                    item = self.ui.employees_tw.item(row, col)
+                    item.setBackground(QColor("red"))
+                continue
+
+            
+
+
+    def showEvent(self, event) -> None:
         self.employees_set_tables_info()
+        self.ui.selectedBriefing_le.setText("Не выбран")
+        self.ui.selectedEmployee_le.setText("Не выбран")
+        self.selected_briefing_id = None
+        self.selected_employee_id = None
 
     def employees_set_tables_info(self):
         empl_data = get_employees_last_briefed()
         self.empl_tmanager.fill_table(empl_data)
         inst_data = select_all(SafetyBriefings)
         self.brief_tmanager.fill_table(inst_data)
+        self.color_expired_briefings()
         
 
     def departments_set_tables_info(self):

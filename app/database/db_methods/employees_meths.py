@@ -3,7 +3,7 @@ import datetime
 from peewee import fn
 
 from app.database import Employees, BriefedEmployees, SafetyBriefings, db
-from app.database.db_methods import select_all
+
 
 def get_employees_last_briefed():
     data = []
