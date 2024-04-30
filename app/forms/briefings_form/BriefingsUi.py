@@ -15,9 +15,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QHeaderView, QMainWindow, QMenuBar,
-    QPushButton, QSizePolicy, QStatusBar, QTabWidget,
-    QTableWidget, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QHeaderView, QMainWindow,
+    QMenuBar, QPushButton, QSizePolicy, QStatusBar,
+    QTabWidget, QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_BriefingsWindow(object):
     def setupUi(self, BriefingsWindow):
@@ -36,13 +36,20 @@ class Ui_BriefingsWindow(object):
         self.employees_tab.setObjectName(u"employees_tab")
         self.employees_tw = QTableWidget(self.employees_tab)
         self.employees_tw.setObjectName(u"employees_tw")
-        self.employees_tw.setGeometry(QRect(10, 10, 391, 501))
+        self.employees_tw.setGeometry(QRect(10, 10, 911, 231))
+        self.employees_tw.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.employees_tw.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.briefings_tw = QTableWidget(self.employees_tab)
         self.briefings_tw.setObjectName(u"briefings_tw")
-        self.briefings_tw.setGeometry(QRect(510, 10, 421, 501))
+        self.briefings_tw.setGeometry(QRect(10, 300, 911, 211))
+        self.briefings_tw.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.briefings_tw.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.instruct_pb = QPushButton(self.employees_tab)
         self.instruct_pb.setObjectName(u"instruct_pb")
-        self.instruct_pb.setGeometry(QRect(410, 50, 93, 81))
+        self.instruct_pb.setGeometry(QRect(380, 250, 201, 41))
+        self.back_pb = QPushButton(self.employees_tab)
+        self.back_pb.setObjectName(u"back_pb")
+        self.back_pb.setGeometry(QRect(790, 250, 93, 41))
         self.tabWidget.addTab(self.employees_tab, "")
         self.departments_tab = QWidget()
         self.departments_tab.setObjectName(u"departments_tab")
@@ -66,8 +73,8 @@ class Ui_BriefingsWindow(object):
 
     def retranslateUi(self, BriefingsWindow):
         BriefingsWindow.setWindowTitle(QCoreApplication.translate("BriefingsWindow", u"\u0418\u043d\u0441\u0442\u0440\u0443\u043a\u0442\u0430\u0436\u0438", None))
-        self.instruct_pb.setText(QCoreApplication.translate("BriefingsWindow", u"\u041f\u0440\u043e\u0432\u0435\u0441\u0442\u0438\n"
-"\u0438\u043d\u0441\u0442\u0440\u0443\u043a\u0442\u0430\u0436", None))
+        self.instruct_pb.setText(QCoreApplication.translate("BriefingsWindow", u"\u041f\u0440\u043e\u0432\u0435\u0441\u0442\u0438 \u0438\u043d\u0441\u0442\u0440\u0443\u043a\u0442\u0430\u0436", None))
+        self.back_pb.setText(QCoreApplication.translate("BriefingsWindow", u"\u041d\u0430\u0437\u0430\u0434", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.employees_tab), QCoreApplication.translate("BriefingsWindow", u"\u0412\u0441\u0435 \u0441\u043e\u0442\u0440\u0443\u0434\u043d\u0438\u043a\u0438", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.departments_tab), QCoreApplication.translate("BriefingsWindow", u"\u0414\u0435\u043f\u0430\u0440\u0442\u0430\u043c\u0435\u043d\u0442\u044b", None))
     # retranslateUi

@@ -12,7 +12,8 @@ class MenuForm(QMainWindow):
                  parent=None, 
                  auth_signals: AuthorizationSignals = None, 
                  menu_signals: MenuSignals = None,
-                 data_manage_signals: DataManagingSignals = None):
+                 data_manage_signals: DataManagingSignals = None,
+                 briefing_signals: BriefingsSignals = None):
         super(MenuForm, self).__init__(parent)
         self.ui = Ui_MenuWindow()
         self.ui.setupUi(self)
@@ -27,10 +28,18 @@ class MenuForm(QMainWindow):
         self.data_manage_signals = data_manage_signals
         self.data_manage_signals.goto_menu.connect(self.user_back)
 
+        self.briefing_signals = briefing_signals
+        self.briefing_signals.goto_menu.connect(self.user_back)
+
         # Signals connection
 
         self.ui.logout_pb.clicked.connect(self.logout)
         self.ui.changeData_pb.clicked.connect(self.goto_data_change)
+        self.ui.briefingCheck_pb.clicked.connect(self.goto_briefings)
+
+    def goto_briefings(self):
+        self.hide()
+        self.menu_signals.goto_briefing.emit()
 
     @Slot()
     def user_back(self):

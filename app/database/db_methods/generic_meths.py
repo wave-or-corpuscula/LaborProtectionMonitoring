@@ -21,6 +21,12 @@ def update_record(model: BaseModel, update_id: int, data: dict):
     except Exception as e:
         raise
 
+def get_verbose_columns(table: str):
+    model = get_model[table]
+    columns = db.get_columns(table)
+    verbose_columns = [model._meta.fields[col.name].verbose_name if model._meta.fields[col.name].verbose_name else col.name for col in columns]
+    return verbose_columns
+
 def select_all(model: BaseModel):
     table = model._meta.table_name
     match table:

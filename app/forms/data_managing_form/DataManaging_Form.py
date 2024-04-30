@@ -20,7 +20,7 @@ class DataManagingForm(QMainWindow):
         self.ui = Ui_DataManagingWindow()
         self.ui.setupUi(self)
 
-        self.tmanager = TableManager(self.ui.dataDisplay_tw)
+        self.tmanager = TableManager(self.ui.dataDisplay_tw, hidden_cols=[0])
 
         # Custom signals connection
 
@@ -140,10 +140,8 @@ class DataManagingForm(QMainWindow):
         return get_model[self.curTable]
 
     def get_table_columns(self, table: str):
-        model = get_model[table]
-        columns = db.get_columns(table)
-        verbose_columns = [model._meta.fields[col.name].verbose_name if model._meta.fields[col.name].verbose_name else col.name for col in columns]
-        self.columns_types = {v_col: col_type for v_col, col_type in zip(verbose_columns, model._meta.fields.values())}
+        verbose_columns = get_verbose_columns(table)
+        self.columns_types = {v_col: col_type for v_col, col_type in zip(verbose_columns, self.curModel._meta.fields.values())}
         return verbose_columns
 
     @Slot()

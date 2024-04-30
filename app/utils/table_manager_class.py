@@ -1,17 +1,20 @@
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem
-from PySide6.QtWidgets import QHeaderView
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView
+
 
 class TableManager:
 
-    def __init__(self, table: QTableWidget):
+    def __init__(self, table: QTableWidget, hidden_cols: list = None):
         self.table = table
+        self.hidden_cols = hidden_cols
 
     def fill_table(self, data: list[list], columns: list = None):
         if columns:
             self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
             self.table.setColumnCount(len(columns))
             self.table.setHorizontalHeaderLabels(columns)
-            self.table.setColumnHidden(0, 1)
+            if self.hidden_cols:
+                for col in self.hidden_cols:
+                    self.table.setColumnHidden(col, 1)
 
         rows = len(data)
         self.table.setRowCount(rows)
