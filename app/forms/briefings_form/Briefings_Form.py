@@ -42,7 +42,7 @@ class BriefingsForm(QMainWindow):
 
 
 
-        self.employees_set_tables_info()
+        # self.employees_set_tables_info()
 
     @Slot()
     def goto_menu(self):
