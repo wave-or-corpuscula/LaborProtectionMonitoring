@@ -10,10 +10,16 @@ from app.utils import User
 
 class AuthorizationForm(QMainWindow):
 
-    def __init__(self, parent=None, auth_signals: AuthorizationSignals = None, menu_signals: MenuSignals = None):
+    def __init__(self, 
+                 parent=None, 
+                 auth_signals: AuthorizationSignals = None, 
+                 menu_signals: MenuSignals = None,
+                 hash_func = None):
         super(AuthorizationForm, self).__init__(parent)
         self.ui = Ui_AuthorizationWindow()
         self.ui.setupUi(self)
+
+        self.hash_func = hash_func
 
         self.auth_signals = auth_signals
         self.menu_signals = menu_signals
@@ -31,7 +37,7 @@ class AuthorizationForm(QMainWindow):
         username = self.ui.username_le.text()
         password = self.ui.password_le.text()
 
-        user, is_admin = check_user(username, password)
+        user, is_admin = check_user(username, self.hash_func(password))
         if not user:
             QMessageBox.about(self, "Ошибка", "Пользователя не существует!")
         else:

@@ -18,6 +18,8 @@ class MenuForm(QMainWindow):
         self.ui = Ui_MenuWindow()
         self.ui.setupUi(self)
 
+        self.user = None
+
         # Custom signals connection
 
         self.auth_signals = auth_signals
@@ -36,10 +38,11 @@ class MenuForm(QMainWindow):
         self.ui.logout_pb.clicked.connect(self.logout)
         self.ui.changeData_pb.clicked.connect(self.goto_data_change)
         self.ui.briefingCheck_pb.clicked.connect(self.goto_briefings)
+        self.ui.exit_pb.clicked.connect(self.close)
 
     def goto_briefings(self):
         self.hide()
-        self.menu_signals.goto_briefing.emit()
+        self.menu_signals.goto_briefing.emit(self.user)
 
     @Slot()
     def user_back(self):
@@ -47,11 +50,12 @@ class MenuForm(QMainWindow):
 
     @Slot()
     def goto_data_change(self):
-        self.menu_signals.goto_data_change.emit()
         self.hide()
+        self.menu_signals.goto_data_change.emit(self.user)
 
     @Slot(User)
     def update_user_info(self, user: User):
+        self.user = user
         self.ui.username_lb.setText(user.username)
         if user.is_admin:
             self.ui.username_lb.setStyleSheet("border: 1px solid yellow")

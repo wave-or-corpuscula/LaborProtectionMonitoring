@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QLineEdit, QHBoxLay
 from .DataManagingUi import Ui_DataManagingWindow
 from app.database import *
 from app.database.db_methods import *
-from app.utils import TableManager
+from app.utils import TableManager, User
 from app.signals import MenuSignals, DataManagingSignals
 
 
@@ -15,10 +15,14 @@ class DataManagingForm(QMainWindow):
     def __init__(self, 
                  parent=None, 
                  menu_signals: MenuSignals = None, 
-                 data_manage_signals: DataManagingSignals = None):
+                 data_manage_signals: DataManagingSignals = None,
+                 hash_func = None):
         super(DataManagingForm, self).__init__(parent)
         self.ui = Ui_DataManagingWindow()
         self.ui.setupUi(self)
+
+        self.user = None
+        self.hash_func = hash_func
 
         self.tmanager = TableManager(self.ui.dataDisplay_tw, hidden_cols=[0])
 
@@ -50,10 +54,20 @@ class DataManagingForm(QMainWindow):
     def getInputDict(self):
         columns = [col.name for col in db.get_columns(self.curTable)[1:]]
         values = self.get_inputs_data()
+        if self.curTable == Users._meta.table_name:
+            values[-1] = self.hash_func(values[-1])
         return {col: val for col, val in zip(columns, values)}
 
     @Slot()
     def change_record(self):
+        if self.curTable == Admins._meta.table_name:
+            if not self.user.is_admin:
+                QMessageBox.critical(self, "Недостаточно прав", "Вы не можете изменить администратора!")
+                return
+        if self.curTable == Users._meta.table_name:
+            if not self.user.is_admin and check_admin(int(self.record_id)):
+                QMessageBox.critical(self, "Недостаточно прав", "Пользователь является администратором, вы не можете его изменить!")
+                return
         if self.record_id:
             try:
                 update_record(self.curModel, self.record_id, self.getInputDict)
@@ -68,6 +82,10 @@ class DataManagingForm(QMainWindow):
 
     @Slot()
     def add_record(self):
+        if self.curTable == Admins._meta.table_name:
+            if not self.user.is_admin:
+                QMessageBox.critical(self, "Недостаточно прав", "Вы не можете добавить администратора!")
+                return
         try:
             add_record(self.curModel, self.getInputDict)
             self.refresh_data()
@@ -99,6 +117,17 @@ class DataManagingForm(QMainWindow):
 
     @Slot()
     def del_record(self):
+        if self.curTable == Admins._meta.table_name:
+            if not self.user.is_admin:
+                QMessageBox.critical(self, "Недостаточно прав", "Вы не можете удалить администратора!")
+                return
+        if self.curTable == Users._meta.table_name or self.curTable == Admins._meta.table_name:
+            if get_username(self.record_id) == self.user.username:
+                QMessageBox.critical(self, "Ошибка", "Вы не можете удалить себя!")
+                return
+            elif not self.user.is_admin and check_admin(int(self.record_id)):
+                QMessageBox.critical(self, "Недостаточно прав", "Пользователь является администратором, вы не можете его удалить!")
+                return
         if self.record_id:
             delete_record(self.curModel, self.record_id)
             self.refresh_data()
@@ -179,11 +208,12 @@ class DataManagingForm(QMainWindow):
 
     @Slot()
     def goto_menu(self):
-        self.data_manage_signals.goto_menu.emit()
         self.hide()
+        self.data_manage_signals.goto_menu.emit()
     
-    @Slot()
-    def user_enters(self):
+    @Slot(User)
+    def user_enters(self, user: User):
+        self.user = user
         self.show()
 
     @staticmethod

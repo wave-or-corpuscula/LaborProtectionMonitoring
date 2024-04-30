@@ -10,4 +10,4 @@ class Employees(BaseModel):
     is_male = BooleanField(verbose_name="Пол", null=False)
 
     class Meta:
-        table_name = "employees"
+        table_name = "Сотрудники"

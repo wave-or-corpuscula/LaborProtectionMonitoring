@@ -9,4 +9,4 @@ class SafetyBriefings(BaseModel):
     date = DateField(verbose_name="Дата проведения", null=False)
 
     class Meta:
-        table_name = "safety_briefings"
+        table_name = "Инструктажи"

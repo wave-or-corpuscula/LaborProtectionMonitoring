@@ -7,4 +7,4 @@ class Departments(BaseModel):
     department_name = CharField(verbose_name="Департамент", null=False)
 
     class Meta:
-        table_name = "departments"
+        table_name = "Департаменты"

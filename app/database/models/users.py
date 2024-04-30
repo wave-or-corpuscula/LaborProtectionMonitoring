@@ -9,4 +9,4 @@ class Users(BaseModel):
 
 
     class Meta:
-        table_name = "users"
+        table_name = "Пользователи"

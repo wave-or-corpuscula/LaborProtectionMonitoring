@@ -5,5 +5,5 @@ from app.utils import User
 
 class MenuSignals(QObject):
     user_logout = Signal()
-    goto_data_change = Signal()
-    goto_briefing = Signal()
+    goto_data_change = Signal(User)
+    goto_briefing = Signal(User)

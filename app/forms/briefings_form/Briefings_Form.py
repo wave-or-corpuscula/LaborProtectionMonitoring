@@ -5,7 +5,7 @@ from PySide6.QtCore import Slot
 from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox
 
 from .BriefingsUi import Ui_BriefingsWindow
-from app.utils import TableManager
+from app.utils import TableManager, User
 from app.database import SafetyBriefings, BriefedEmployees
 from app.database.db_methods import get_employees_last_briefed, select_all, get_verbose_columns, add_record
 from app.signals import *
@@ -20,6 +20,8 @@ class BriefingsForm(QMainWindow):
         super(BriefingsForm, self).__init__(parent)
         self.ui = Ui_BriefingsWindow()
         self.ui.setupUi(self)
+        
+        self.user = None
 
         self.selected_employee_id = None
         self.selected_briefing_id = None
@@ -39,7 +41,7 @@ class BriefingsForm(QMainWindow):
         self.menu_signals = menu_signals
         self.briefing_signals = briefing_signals
 
-        self.menu_signals.goto_briefing.connect(self.show)
+        self.menu_signals.goto_briefing.connect(self.user_enter)
 
         # Generic signals connection
 
@@ -57,6 +59,9 @@ class BriefingsForm(QMainWindow):
         self.ui.selectedEmployee_le.setText(self.ui.employees_tw.item(item.row(), 1).text())
 
     def instruct_employee(self):
+        if not self.user.is_admin:
+            QMessageBox.critical(self, "Недостаточно прав", "Только администратор может инструктировать сотрудников!")
+            return
         if not self.selected_employee_id:
             QMessageBox.warning(self, "Не выбран работник", "Сначала выребете работника!")
             return
@@ -66,7 +71,12 @@ class BriefingsForm(QMainWindow):
         add_record(BriefedEmployees, {"briefing_id": self.selected_briefing_id, 
                                       "employee_id": self.selected_employee_id})
         self.employees_set_tables_info()
-        
+    
+
+    @Slot(User)
+    def user_enter(self, user: User):
+        self.user = user
+        self.show()
 
     @Slot()
     def goto_menu(self):
@@ -88,9 +98,6 @@ class BriefingsForm(QMainWindow):
                     item.setBackground(QColor("red"))
                 continue
 
-            
-
-
     def showEvent(self, event) -> None:
         self.employees_set_tables_info()
         self.ui.selectedBriefing_le.setText("Не выбран")
@@ -104,7 +111,3 @@ class BriefingsForm(QMainWindow):
         inst_data = select_all(SafetyBriefings)
         self.brief_tmanager.fill_table(inst_data)
         self.color_expired_briefings()
-        
-
-    def departments_set_tables_info(self):
-        pass
