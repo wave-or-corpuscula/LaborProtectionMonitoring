@@ -33,6 +33,10 @@ class BriefingsForm(QMainWindow):
 
         # Employees search input
         self.ui.employeesSearch_le.textEdited.connect(self.search_employees)
+
+        # Briefings date filter 
+        self.ui.filterBriefings_pb.clicked.connect(self.date_filter_briefings)
+        self.ui.cancelFilterBriefings_pb.clicked.connect(self.cancel_date_filter)
         
         self.empl_data = get_employees_last_briefed()
         self.empl_tmanager.fill_table(self.empl_data, self.employees_columns)
@@ -53,8 +57,18 @@ class BriefingsForm(QMainWindow):
         self.ui.employees_tw.itemClicked.connect(self.select_employee)
         self.ui.briefings_tw.itemClicked.connect(self.select_briefing)
 
+    def cancel_date_filter(self):
+        self.brief_tmanager.fill_table(self.inst_data)
+
+    def date_filter_briefings(self):
+        start_date = self.ui.briefingsStart_de.date()
+        end_date = self.ui.briefingEnd_de.date()
+
+        self.brief_tmanager.fill_with_date_filter(self.inst_data, start_date, end_date, 3)
+
     def search_employees(self, filter_text: str):
         self.empl_tmanager.fill_with_filter(self.empl_data, filter_text.lower())
+        self.color_expired_briefings()
 
     def select_briefing(self, item: QTableWidgetItem):
         self.selected_briefing_id = self.ui.briefings_tw.item(item.row(), 0).text()
@@ -110,8 +124,8 @@ class BriefingsForm(QMainWindow):
         self.selected_employee_id = None
 
     def employees_set_tables_info(self):
-        empl_data = get_employees_last_briefed()
-        self.empl_tmanager.fill_table(empl_data)
-        inst_data = select_all(SafetyBriefings)
-        self.brief_tmanager.fill_table(inst_data)
+        self.empl_data = get_employees_last_briefed()
+        self.empl_tmanager.fill_table(self.empl_data)
+        self.inst_data = select_all(SafetyBriefings)
+        self.brief_tmanager.fill_table(self.inst_data)
         self.color_expired_briefings()

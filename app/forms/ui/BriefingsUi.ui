@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>939</width>
-    <height>681</height>
+    <height>712</height>
    </rect>
   </property>
   <property name="font">
@@ -23,7 +23,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>410</y>
+      <y>420</y>
       <width>911</width>
       <height>211</height>
      </rect>
@@ -194,11 +194,14 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="placeholderText">
+     <string>Поиск...</string>
+    </property>
    </widget>
    <widget class="QDateEdit" name="briefingsStart_de">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>298</x>
       <y>370</y>
       <width>141</width>
       <height>31</height>
@@ -208,7 +211,7 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>410</x>
+      <x>268</x>
       <y>360</y>
       <width>31</width>
       <height>41</height>
@@ -226,7 +229,7 @@
    <widget class="QDateEdit" name="briefingEnd_de">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>488</x>
       <y>370</y>
       <width>141</width>
       <height>31</height>
@@ -236,7 +239,7 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>590</x>
+      <x>448</x>
       <y>360</y>
       <width>31</width>
       <height>41</height>
@@ -254,7 +257,7 @@
    <widget class="QPushButton" name="filterBriefings_pb">
     <property name="geometry">
      <rect>
-      <x>782</x>
+      <x>640</x>
       <y>370</y>
       <width>131</width>
       <height>31</height>
@@ -296,6 +299,19 @@
     <property name="icon">
      <iconset>
       <normaloff>../../icons/excel.JPG</normaloff>../../icons/excel.JPG</iconset>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="cancelFilterBriefings_pb">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>370</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Отменить</string>
     </property>
    </widget>
   </widget>

@@ -1,3 +1,4 @@
+from PySide6.QtCore import QDate
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QHeaderView
 
 
@@ -27,6 +28,20 @@ class TableManager:
         else:
             self.fill_table(data)
     
+    def fill_with_date_filter(self, data: list[list], start_date: QDate, end_date: QDate, date_column_index: int):
+        self.table.setRowCount(0)
+        for row_data in data:
+            date_str = row_data[date_column_index]
+            date = QDate.fromString(date_str, "yyyy-MM-dd")
+            
+            if start_date <= date <= end_date:
+                table_row = [QTableWidgetItem(str(col_data)) for col_data in row_data]
+                print(table_row)
+                row_position = self.table.rowCount()
+                self.table.insertRow(row_position)
+                for col, item in enumerate(table_row):
+                    self.table.setItem(row_position, col, item)
+
     def fill_table(self, data: list[list], columns: list = None):
         if columns:
             self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
