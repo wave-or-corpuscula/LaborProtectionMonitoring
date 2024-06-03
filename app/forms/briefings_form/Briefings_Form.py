@@ -30,11 +30,14 @@ class BriefingsForm(QMainWindow):
         self.empl_tmanager = TableManager(self.ui.employees_tw, hidden_cols=[0])
         self.briefings_columns = get_verbose_columns(SafetyBriefings._meta.table_name)
         self.brief_tmanager = TableManager(self.ui.briefings_tw, hidden_cols=[0])
+
+        # Employees search input
+        self.ui.employeesSearch_le.textEdited.connect(self.search_employees)
         
-        empl_data = get_employees_last_briefed()
-        self.empl_tmanager.fill_table(empl_data, self.employees_columns)
-        inst_data = select_all(SafetyBriefings)
-        self.brief_tmanager.fill_table(inst_data, self.briefings_columns)
+        self.empl_data = get_employees_last_briefed()
+        self.empl_tmanager.fill_table(self.empl_data, self.employees_columns)
+        self.inst_data = select_all(SafetyBriefings)
+        self.brief_tmanager.fill_table(self.inst_data, self.briefings_columns)
 
         # Cursom signals connection
 
@@ -49,6 +52,9 @@ class BriefingsForm(QMainWindow):
         self.ui.instruct_pb.clicked.connect(self.instruct_employee)
         self.ui.employees_tw.itemClicked.connect(self.select_employee)
         self.ui.briefings_tw.itemClicked.connect(self.select_briefing)
+
+    def search_employees(self, filter_text: str):
+        self.empl_tmanager.fill_with_filter(self.empl_data, filter_text.lower())
 
     def select_briefing(self, item: QTableWidgetItem):
         self.selected_briefing_id = self.ui.briefings_tw.item(item.row(), 0).text()
@@ -71,7 +77,6 @@ class BriefingsForm(QMainWindow):
         add_record(BriefedEmployees, {"briefing_id": self.selected_briefing_id, 
                                       "employee_id": self.selected_employee_id})
         self.employees_set_tables_info()
-    
 
     @Slot(User)
     def user_enter(self, user: User):
@@ -85,7 +90,6 @@ class BriefingsForm(QMainWindow):
 
     def color_expired_briefings(self):
         for row in range(self.ui.employees_tw.rowCount()):
-
             if self.ui.employees_tw.item(row, 2).text() == "Не проходил":
                 for col in range(len(self.employees_columns)):
                     item = self.ui.employees_tw.item(row, col)

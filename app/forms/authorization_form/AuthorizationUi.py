@@ -61,7 +61,7 @@ class Ui_AuthorizationWindow(object):
     # setupUi
 
     def retranslateUi(self, AuthorizationWindow):
-        AuthorizationWindow.setWindowTitle(QCoreApplication.translate("AuthorizationWindow", u"\u0410\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f", None))
+        AuthorizationWindow.setWindowTitle(QCoreApplication.translate("AuthorizationWindow", u"\u0410\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f", None))
         self.label.setText(QCoreApplication.translate("AuthorizationWindow", u"\u0410\u0432\u0442\u043e\u0440\u0438\u0437\u0430\u0446\u0438\u044f", None))
         self.username_le.setPlaceholderText(QCoreApplication.translate("AuthorizationWindow", u"\u0418\u043c\u044f \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u044f", None))
         self.password_le.setPlaceholderText(QCoreApplication.translate("AuthorizationWindow", u"\u041f\u0430\u0440\u043e\u043b\u044c", None))
