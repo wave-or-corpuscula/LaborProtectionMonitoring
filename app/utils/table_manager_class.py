@@ -36,7 +36,6 @@ class TableManager:
             
             if start_date <= date <= end_date:
                 table_row = [QTableWidgetItem(str(col_data)) for col_data in row_data]
-                print(table_row)
                 row_position = self.table.rowCount()
                 self.table.insertRow(row_position)
                 for col, item in enumerate(table_row):

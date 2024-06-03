@@ -1,8 +1,11 @@
-import datetime
+import os
+
+from datetime import datetime
+from openpyxl import Workbook
 
 from PySide6.QtGui import QColor
 from PySide6.QtCore import Slot
-from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QTableWidgetItem, QMessageBox, QTableWidget
 
 from .BriefingsUi import Ui_BriefingsWindow
 from app.utils import TableManager, User
@@ -37,6 +40,10 @@ class BriefingsForm(QMainWindow):
         # Briefings date filter 
         self.ui.filterBriefings_pb.clicked.connect(self.date_filter_briefings)
         self.ui.cancelFilterBriefings_pb.clicked.connect(self.cancel_date_filter)
+
+        # Export to excel
+        self.ui.briefingsToExcel_pb.clicked.connect(self.export_briefings)
+        self.ui.employeesToExcel_pb.clicked.connect(self.export_employees)
         
         self.empl_data = get_employees_last_briefed()
         self.empl_tmanager.fill_table(self.empl_data, self.employees_columns)
@@ -56,6 +63,14 @@ class BriefingsForm(QMainWindow):
         self.ui.instruct_pb.clicked.connect(self.instruct_employee)
         self.ui.employees_tw.itemClicked.connect(self.select_employee)
         self.ui.briefings_tw.itemClicked.connect(self.select_briefing)
+
+    def export_briefings(self):
+        file_path = self.save_table_to_excel(self.ui.briefings_tw, "Инструктажи на ")
+        QMessageBox.about(self, "Экспорт завершен", f"Файл сохранен: {file_path}")
+
+    def export_employees(self):
+        file_path = self.save_table_to_excel(self.ui.employees_tw, "Инструктажи сотрудников на ")
+        QMessageBox.about(self, "Экспорт завершен", f"Файл сохранен: {file_path}")
 
     def cancel_date_filter(self):
         self.brief_tmanager.fill_table(self.inst_data)
@@ -109,8 +124,8 @@ class BriefingsForm(QMainWindow):
                     item = self.ui.employees_tw.item(row, col)
                     item.setBackground(QColor("red"))
                 continue
-            next_brief_date = datetime.datetime.strptime(self.ui.employees_tw.item(row, 4).text(), "%Y-%m-%d").date()
-            if (next_brief_date - datetime.datetime.today().date()).total_seconds() < 0:
+            next_brief_date = datetime.strptime(self.ui.employees_tw.item(row, 4).text(), "%Y-%m-%d").date()
+            if (next_brief_date - datetime.today().date()).total_seconds() < 0:
                 for col in range(len(self.employees_columns)):
                     item = self.ui.employees_tw.item(row, col)
                     item.setBackground(QColor("red"))
@@ -129,3 +144,35 @@ class BriefingsForm(QMainWindow):
         self.inst_data = select_all(SafetyBriefings)
         self.brief_tmanager.fill_table(self.inst_data)
         self.color_expired_briefings()
+
+    @staticmethod
+    def save_table_to_excel(table: QTableWidget, doc_type: str):
+        # Создание директории, если она не существует
+        output_dir = "app\\documents"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Формирование названия файла с текущей датой и временем
+        current_time = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+        filename = f"{doc_type} {current_time}.xlsx"
+        file_path = os.path.join(output_dir, filename)
+
+        # Создание рабочей книги и активного листа
+        wb = Workbook()
+        ws = wb.active
+        ws.title = doc_type
+
+        # Добавление заголовков в первую строку
+        headers = [table.horizontalHeaderItem(i).text() for i in range(table.columnCount())]
+        ws.append(headers)
+
+        # Добавление данных из таблицы
+        for row in range(table.rowCount()):
+            row_data = []
+            for col in range(table.columnCount()):
+                item = table.item(row, col)
+                row_data.append(item.text() if item is not None else "")
+            ws.append(row_data)
+
+        # Сохранение файла
+        wb.save(file_path)
+        return file_path

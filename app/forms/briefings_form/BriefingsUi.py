@@ -102,7 +102,7 @@ class Ui_BriefingsWindow(object):
         self.briefingsToExcel_pb.setObjectName(u"briefingsToExcel_pb")
         self.briefingsToExcel_pb.setGeometry(QRect(150, 370, 31, 31))
         icon = QIcon()
-        icon.addFile(u"../../icons/excel.JPG", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(u"./app/icons/excel.JPG", QSize(), QIcon.Normal, QIcon.Off)
         self.briefingsToExcel_pb.setIcon(icon)
         self.employeesToExcel_pb = QPushButton(self.centralwidget)
         self.employeesToExcel_pb.setObjectName(u"employeesToExcel_pb")
